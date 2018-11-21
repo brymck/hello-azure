@@ -5,6 +5,7 @@
 *.so
 *.dylib
 hello-azure
+main
 target
 
 # Test binary, build with `go test -c`
