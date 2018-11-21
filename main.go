@@ -1,8 +1,8 @@
 package main
 
 import (
-	"helloazure/homepage"
-	"helloazure/server"
+	"github.com/brymck/hello-azure/homepage"
+	"github.com/brymck/hello-azure/server"
 	"log"
 	"net/http"
 	"os"
