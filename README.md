@@ -84,6 +84,12 @@ az webapp show --name "HelloAzureWebApp$uid" --resource-group HelloAzureResource
   --query 'defaultHostName' | xargs -I {} echo 'https://{}'
 ```
 
+Create a container registry
+
+```sh
+az acr create --name HelloAzureRegistry --resource-group HelloAzureResourceGroup --sku Basic
+```
+
 Deleting everything
 -------------------
 
