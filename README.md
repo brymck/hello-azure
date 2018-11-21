@@ -70,10 +70,10 @@ az webapp deployment container config --enable-cd true --name "HelloAzureWebApp$
   --resource-group HelloAzureResourceGroup
 ```
 
-Listen on port 8080 for web traffic:
+Listen on port 80 for web traffic:
 
 ```sh
-az webapp config appsettings set --settings WEBSITES_PORT=8080 --name "HelloAzureWebApp$uid" \
+az webapp config appsettings set --settings WEBSITES_PORT=80 --name "HelloAzureWebApp$uid" \
   --resource-group HelloAzureResourceGroup
 ```
 

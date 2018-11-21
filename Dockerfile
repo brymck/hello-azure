@@ -1,7 +1,8 @@
-FROM iron/base
-
+FROM golang:latest
 RUN mkdir /app
-COPY target/hello-azure-linux /app/hello-azure
+ADD . /app/
 WORKDIR /app
-
-ENTRYPOINT ["./hello-azure"]
+RUN go get -d
+RUN go build -o main .
+CMD ["/app/main"]
+EXPOSE 80
