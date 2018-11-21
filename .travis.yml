@@ -1,1 +1,10 @@
+---
 language: go
+
+sudo: required
+
+services:
+  - docker
+
+script:
+  - make
