@@ -4,45 +4,95 @@ hello-azure
 Hello on Azure
 
 Dependencies
--------------
+------------
 
 If you haven't already installed and set up Go and the Azure CLI, run this:
 
 ```sh
+DEPENDENCIES=(
+  azure-cli
+  cmake
+  go
+)
 brew update
-brew install azure-cli go || (brew update azure-cli go && brew cleanup azure-cli go)
+brew install $DEPENDENCIES || (brew update $DEPENDENCIES && brew cleanup $DEPENDENCIES)
+```
+
+You should also make sure you can log in to Azure with the CLI:
+
+```sh
 az login
 ```
 
-If you're behind a corporate proxy that does something dumb like using a self-signed cert, you may
-need to have that proxy on and with the `HTTP_PROXY` and `HTTPS_PROXY` variables set correctly.
-
-Manual stuff
-------------
+If you want to build a Docker image locally, I'll also assume you have a [desktop
+installation][install_docker], your username is set in the `DOCKER_USERNAME` environment variable,
+and you've managed to log in at the command line:
 
 ```sh
-docker login --username <YOUR_USERNAME>
+docker login --username "$DOCKER_USERNAME"
 ```
 
-Blah
-----
+Build everything
+----------------
+
+Just run `make`
+
+
+Deployment
+----------
+
+Create a resource group:
 
 ```sh
-# Create a resource group
-az group create --location japaneast --name HelloAzureResourceGroup
+az group create \
+  --location japaneast \
+  --name HelloAzureResourceGroup
+```
 
-# Create a Linux app service
+Create a Linux app service:
+
+```sh
 az appservice plan create --name HelloAzurePlan --resource-group HelloAzureResourceGroup --is-linux
+```
 
-# Azure requires web app names to be globally unique, so let's create our app suffixed with a UUID
+Azure requires web app names to be globally unique, so let's create our app suffixed with a UUID:
+
+```sh
 uid="$(uuidgen)"
 az webapp create --name "HelloAzureWebApp$uid" --plan HelloAzurePlan --resource-group \
   HelloAzureResourceGroup --deployment-container-image-name brymck/hello-azure
+```
 
-# Enable continuous deployment
+Enable continuous deployment, which defaults to being off:
+
+```sh
 az webapp deployment container config --enable-cd true --name "HelloAzureWebApp$uid" \
   --resource-group HelloAzureResourceGroup
 ```
 
+Listen on port 8080 for web traffic:
 
+```sh
+az webapp config appsettings set --settings WEBSITES_PORT=8080 --name "HelloAzureWebApp$uid" \
+  --resource-group HelloAzureResourceGroup
+```
+
+Get the URL:
+
+```sh
+az webapp show --name "HelloAzureWebApp$uid" --resource-group HelloAzureResourceGroup --output tsv \
+  --query 'defaultHostName' | xargs -I {} echo 'https://{}'
+```
+
+Deleting everything
+-------------------
+
+```sh
+az webapp delete --name "HelloAzureWebApp$uid" --resource-group HelloAzureResourceGroup
+
+az group delete --name HelloAzureResourceGroup
+```
+
+
+[install_docker]: https://www.docker.com/products/docker-desktop
 [token]: https://github.com/settings/tokens/new
