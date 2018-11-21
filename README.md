@@ -28,10 +28,10 @@ az login
 
 If you want to build a Docker image locally, I'll also assume you have a [desktop
 installation][install_docker], your username is set in the `DOCKER_USERNAME` environment variable,
-and you've managed to log in at the command line:
+your password is in `DOCKER_PASSWORD`, and you've managed to log in at the command line:
 
 ```sh
-docker login --username "$DOCKER_USERNAME"
+echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
 ```
 
 Build everything
@@ -86,11 +86,7 @@ az webapp show --name "HelloAzureWebApp$uid" --resource-group HelloAzureResource
   --query 'defaultHostName' | xargs -I {} echo 'https://{}'
 ```
 
-Create a container registry
-
-```sh
-az acr create --name HelloAzureRegistry --resource-group HelloAzureResourceGroup --sku Basic
-```
+Copy and paste the webhook URL from the Azure Portal into Docker Hub webhooks
 
 Deleting everything
 -------------------
